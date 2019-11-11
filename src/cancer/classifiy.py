@@ -1,11 +1,14 @@
 # General
 import numpy as np
+from datetime import datetime
 from PIL import Image
+import matplotlib.pyplot as plt
 import cv2
 import os
 import pathlib
 import psutil
-from datetime import datetime
+import itertools
+import time
 
 # ML
 import tensorflow as tf
@@ -18,8 +21,6 @@ from keras.layers import Activation, Dropout, Flatten, Dense
 from keras import backend as K
 from keras.utils import plot_model
 
-# DEBUG
-import time
 
 DATA = "Data/"
 ORIGINAL = "Original/"
@@ -27,7 +28,9 @@ Better = "Better/"
 img_width, img_height = 150, 150
 EPOCHS = 10
 batch_size = 16
+
 logdir = "logs/scalars/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+logdir = str(pathlib.Path(logdir))
 
 
 def load_data(path: str) -> tuple:
@@ -191,7 +194,39 @@ def train():
     )
     # Always save weights after training or during training
     model.save_weights('first_try.h5')
+    return model
+
+
+def post_train_examples(model=None):
+    files = load_data(pathlib.Path(DATA, ORIGINAL))
+
+    # Load some demo images
+    yes = [cv2.imread(i) for i in files[0][:2]]
+    no = [cv2.imread(i) for i in files[1][:2]]
+
+    # Resize
+    yes = [cv2.resize(i, (img_height, img_width)) for i in yes]
+    no = [cv2.resize(i, (img_height, img_width)) for i in no]
+
+    images = {
+        "Yes": yes,
+        "No": no
+    }
+
+    index = 1
+    plt.figure(figsize=[6, 6])
+    for i in images:
+        for j in images[i]:
+            plt.subplot(2, 2, index)
+            pred = model.predict(j[np.newaxis, ...])
+            pred = "Yes" if pred == 1 else "No"
+            plt.title(f"Pred: {pred}, Actual: {i}")
+            plt.imshow(j, cmap="gray")
+            index += 1
+
+    plt.show()
 
 
 if __name__ == "__main__":
-    train()
+    model = train()
+    post_train_examples(model)
