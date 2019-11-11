@@ -27,7 +27,11 @@ else:
         json_file = open(args["json"], "r")
     except FileNotFoundError:
         print("Json can't be opened!")
-        exit(-1)
+        print("Retraining...")
+        model = train(args["data"])
+        if not args["skip_examples"]:
+            post_train_examples(args["data"], model)
+        exit(0)
 
     loaded_model_json = json_file.read()
     json_file.close()
@@ -40,4 +44,5 @@ else:
 
     print("Succesfully loaded pretrained model!")
 
-    post_train_examples(args["data"], loaded_model)
+    if not args["skip_examples"]:
+        post_train_examples(args["data"], loaded_model)
