@@ -52,38 +52,45 @@ def load_data(path: str) -> tuple:
 
 
 def prep_model():
-    if K.image_data_format() == 'channels_first':
+    """
+    Define network architechture
+    """
+    if K.image_data_format() == "channels_first":
         input_shape = (3, img_width, img_height)
     else:
         input_shape = (img_width, img_height, 3)
 
     model = Sequential()
     model.add(Conv2D(32, (3, 3), input_shape=input_shape))
-    model.add(Activation('relu'))
+    model.add(Activation("relu"))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
     model.add(Conv2D(32, (3, 3)))
-    model.add(Activation('relu'))
+    model.add(Activation("relu"))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
     model.add(Conv2D(64, (3, 3)))
-    model.add(Activation('relu'))
+    model.add(Activation("relu"))
     model.add(MaxPooling2D(pool_size=(2, 2)))
 
     model.add(Flatten())
     model.add(Dense(64))
-    model.add(Activation('relu'))
+    model.add(Activation("relu"))
     model.add(Dropout(0.5))
     model.add(Dense(1))
-    model.add(Activation('sigmoid'))
+    model.add(Activation("sigmoid"))
 
-    model.compile(loss='binary_crossentropy',
-                  optimizer='adam',
-                  metrics=['accuracy'])
+    # model.compile(loss="binary_crossentropy",
+    #               optimizer="rmsprop",
+    #               metrics=["accuracy"])
+    model.compile(loss="sparse_categorical_crossentropy",
+                  optimizer="rmsprop",
+                  metrics=["accuracy"])
 
     return model
 
 
+# Callback class to log metrics to tensorboard
 class Metrics(keras.callbacks.Callback):
     def on_train_begin(self, logs=None):
         self.summary_writer = tf.summary.create_file_writer(logdir)
@@ -117,17 +124,14 @@ def train(img_dir):
         img_dir,
         target_size=(img_width, img_height),
         batch_size=batch_size,
-        class_mode='binary')
+        class_mode="binary")
 
     model.fit_generator(
         train_generator,
         steps_per_epoch=2000 // batch_size,
-        # verbose=0,
         epochs=EPOCHS,
         callbacks=[tensorboard_callback, metrics]
     )
-    # Always save weights after training or during training
-    # model.save_weights('first_try.h5')
 
     # Serialize to json file
     model_json = model.to_json()

@@ -19,9 +19,6 @@ ap.add_argument("-d", "--data", required=False,
                 help="Path to images for classification.", default="Data/Original/")
 args = vars(ap.parse_args())
 
-print("Cancer Detection with Python, Keras, and Tensorflow!")
-print("Joshua Arulsamy, 2019")
-
 if args["force_train"]:
     model = train(args["data"])
     post_train_examples(args["data"], model)
@@ -30,12 +27,17 @@ else:
         json_file = open(args["json"], "r")
     except FileNotFoundError:
         print("Json can't be opened!")
-        exit(0)
+        exit(-1)
 
     loaded_model_json = json_file.read()
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
-    loaded_model.load_weights(args["model"])
+    try:
+        loaded_model.load_weights(args["model"])
+    except OSError:
+        print("Model can't be opened!")
+        exit(-1)
+
     print("Succesfully loaded pretrained model!")
 
     post_train_examples(args["data"], loaded_model)
