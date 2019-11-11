@@ -6,9 +6,8 @@ import matplotlib.pyplot as plt
 import cv2
 import os
 import pathlib
-import psutil
-import itertools
 import time
+import json
 
 # ML
 import tensorflow as tf
@@ -21,10 +20,6 @@ from keras.layers import Activation, Dropout, Flatten, Dense
 from keras import backend as K
 from keras.utils import plot_model
 
-
-DATA = "Data/"
-ORIGINAL = "Original/"
-Better = "Better/"
 img_width, img_height = 150, 150
 EPOCHS = 10
 batch_size = 16
@@ -56,64 +51,6 @@ def load_data(path: str) -> tuple:
     return (yes_files, no_files)
 
 
-def generate_better_data(paths: tuple):
-    """
-    Debug tool to generate tons of augmented images.
-    """
-    datagen = ImageDataGenerator(
-        rotation_range=40,
-        width_shift_range=0.2,
-        height_shift_range=0.2,
-        rescale=1. / 255,
-        shear_range=0.2,
-        zoom_range=0.2,
-        horizontal_flip=True,
-        fill_mode="nearest"
-    )
-
-    for i in paths[0]:
-        img = load_img(i)
-        x = img_to_array(img)
-        x = x.reshape((1,) + x.shape)
-
-        i = 0
-        for batch in datagen.flow(x, batch_size=1, save_to_dir=pathlib.Path(DATA, Better, "yes"), save_format="jpg"):
-            i += 1
-            if i > 20:
-                break
-    for i in paths[1]:
-        img = load_img(i)
-        x = img_to_array(img)
-        x = x.reshape((1,) + x.shape)
-
-        i = 0
-        for batch in datagen.flow(x, batch_size=1, save_to_dir=pathlib.Path(DATA, Better, "no"), save_format="jpg"):
-            i += 1
-            if i > 20:
-                break
-
-
-def show_data(paths: tuple):
-    """
-    Show all the images
-    param1: tuple(list, list) # (List_of_yes_images, List_of_no_images)
-    """
-    for i in paths[0]:
-        img = cv2.imread(i)
-        cv2.imshow("Yes", img)
-        time.sleep(0.01)
-        # Quit on ESC
-        if cv2.waitKey(1) == 27:
-            exit(0)
-    for i in paths[1]:
-        img = cv2.imread(i)
-        cv2.imshow("No", img)
-        time.sleep(0.01)
-        # Quit on ESC
-        if cv2.waitKey(1) == 27:
-            exit(0)
-
-
 def prep_model():
     if K.image_data_format() == 'channels_first':
         input_shape = (3, img_width, img_height)
@@ -140,9 +77,6 @@ def prep_model():
     model.add(Dense(1))
     model.add(Activation('sigmoid'))
 
-    # model.compile(loss='binary_crossentropy',
-    #               optimizer='rmsprop',
-    #               metrics=['accuracy'])
     model.compile(loss='binary_crossentropy',
                   optimizer='adam',
                   metrics=['accuracy'])
@@ -166,7 +100,7 @@ class Metrics(keras.callbacks.Callback):
             tf.summary.scalar("Loss", logs.get("loss"), step=epoch)
 
 
-def train():
+def train(img_dir):
     model = prep_model()
 
     metrics = Metrics()
@@ -180,7 +114,7 @@ def train():
         horizontal_flip=True)
 
     train_generator = train_datagen.flow_from_directory(
-        pathlib.Path(DATA, ORIGINAL),
+        img_dir,
         target_size=(img_width, img_height),
         batch_size=batch_size,
         class_mode='binary')
@@ -193,14 +127,20 @@ def train():
         callbacks=[tensorboard_callback, metrics]
     )
     # Always save weights after training or during training
-    model.save_weights('first_try.h5')
+    # model.save_weights('first_try.h5')
+
+    # Serialize to json file
+    model_json = model.to_json()
+    with open("model.json", "w") as f:
+        f.write(model_json)
+    model.save_weights("model.h5")
+
     return model
 
 
-def post_train_examples(model=None):
-    files = load_data(pathlib.Path(DATA, ORIGINAL))
-
+def post_train_examples(files, model):
     # Load some demo images
+    files = load_data(files)
     yes = [cv2.imread(i) for i in files[0][:2]]
     no = [cv2.imread(i) for i in files[1][:2]]
 
@@ -225,8 +165,3 @@ def post_train_examples(model=None):
             index += 1
 
     plt.show()
-
-
-if __name__ == "__main__":
-    model = train()
-    post_train_examples(model)
