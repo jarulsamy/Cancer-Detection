@@ -15,22 +15,25 @@ ap.add_argument("-F", "--force_train", required=False,
 ap.add_argument("-s", "--skip_examples", required=False,
                 help="Skip post training examples", action="store_true")
 
-ap.add_argument("-d", "--data", required=False,
-                help="Path to images for classification.", default="Data/Original/")
+ap.add_argument("-td", "--train_data", required=False,
+                help="Path to training images for classification.", default="Data/train/")
+
+ap.add_argument("-vd", "--val_data", required=False,
+                help="Path to validation images for classification.", default="Data/test/")
 args = vars(ap.parse_args())
 
 if args["force_train"]:
-    model = train(args["data"])
-    post_train_examples(args["data"], model)
+    model = train(args["train_data"], args["val_data"])
+    post_train_examples(args["train_data"], model)
 else:
     try:
         json_file = open(args["json"], "r")
     except FileNotFoundError:
         print("Json can't be opened!")
         print("Retraining...")
-        model = train(args["data"])
+        model = train(args["train_data"], args["val_data"])
         if not args["skip_examples"]:
-            post_train_examples(args["data"], model)
+            post_train_examples(args["train_data"], model)
         exit(0)
 
     loaded_model_json = json_file.read()
@@ -41,12 +44,12 @@ else:
     except OSError:
         print("Model can't be opened!")
         print("Retraining...")
-        model = train(args["data"])
+        model = train(args["train_data"], args["val_data"])
         if not args["skip_examples"]:
-            post_train_examples(args["data"], model)
+            post_train_examples(args["val_data"], model)
         exit(0)
 
     print("Succesfully loaded pretrained model!")
 
     if not args["skip_examples"]:
-        post_train_examples(args["data"], loaded_model)
+        post_train_examples(args["val_data"], loaded_model)

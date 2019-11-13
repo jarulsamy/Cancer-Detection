@@ -107,29 +107,41 @@ class Metrics(keras.callbacks.Callback):
             tf.summary.scalar("Loss", logs.get("loss"), step=epoch)
 
 
-def train(img_dir):
+def train(train, test):
     model = prep_model()
 
     metrics = Metrics()
     tensorboard_callback = keras.callbacks.TensorBoard(
         log_dir=logdir, histogram_freq=1)
 
+    # Augmentation for training, many changes
     train_datagen = ImageDataGenerator(
         rescale=1. / 255,
         shear_range=0.2,
         zoom_range=0.2,
         horizontal_flip=True)
 
+    # Augmentation for testing, only rescaling
+    test_datagen = ImageDataGenerator(rescale=1. / 255)
+
     train_generator = train_datagen.flow_from_directory(
-        img_dir,
+        train,
         target_size=(img_width, img_height),
         batch_size=batch_size,
         class_mode="binary")
+
+    validation_generator = test_datagen.flow_from_directory(
+        test,
+        target_size=(img_width, img_height),
+        batch_size=batch_size,
+        class_mode="binary"
+    )
 
     model.fit_generator(
         train_generator,
         steps_per_epoch=2000 // batch_size,
         epochs=EPOCHS,
+        validation_data=validation_generator,
         callbacks=[tensorboard_callback, metrics]
     )
 
