@@ -80,12 +80,12 @@ def prep_model():
     model.add(Dense(1))
     model.add(Activation("sigmoid"))
 
-    # model.compile(loss="binary_crossentropy",
-    #               optimizer="rmsprop",
-    #               metrics=["accuracy"])
-    model.compile(loss="sparse_categorical_crossentropy",
+    model.compile(loss="binary_crossentropy",
                   optimizer="rmsprop",
                   metrics=["accuracy"])
+    # model.compile(loss="sparse_categorical_crossentropy",
+    #               optimizer="rmsprop",
+    #               metrics=["accuracy"])
 
     return model
 

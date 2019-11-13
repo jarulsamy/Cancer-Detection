@@ -40,7 +40,11 @@ else:
         loaded_model.load_weights(args["model"])
     except OSError:
         print("Model can't be opened!")
-        exit(-1)
+        print("Retraining...")
+        model = train(args["data"])
+        if not args["skip_examples"]:
+            post_train_examples(args["data"], model)
+        exit(0)
 
     print("Succesfully loaded pretrained model!")
 
