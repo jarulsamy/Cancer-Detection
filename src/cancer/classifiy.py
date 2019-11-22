@@ -81,7 +81,7 @@ def prep_model():
     model.add(Activation("sigmoid"))
 
     model.compile(loss="binary_crossentropy",
-                  optimizer="rmsprop",
+                  optimizer="adam",
                   metrics=["accuracy"])
     # model.compile(loss="sparse_categorical_crossentropy",
     #               optimizer="rmsprop",
