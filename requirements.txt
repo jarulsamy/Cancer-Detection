@@ -9,3 +9,4 @@ scipy
 pep8
 autopep8
 pycodestyle
+pandas
