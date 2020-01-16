@@ -1,24 +1,29 @@
-# General
-import numpy as np
-from datetime import datetime
-from PIL import Image
-import matplotlib.pyplot as plt
-import cv2
+import json
 import os
 import pathlib
 import time
-import json
+from datetime import datetime
 
-# ML
-import tensorflow as tf
-import scipy
+import cv2
 import keras
-from keras.preprocessing.image import ImageDataGenerator, array_to_img, img_to_array, load_img
-from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D
-from keras.layers import Activation, Dropout, Flatten, Dense
+import matplotlib.pyplot as plt
+import numpy as np
+import scipy
+import tensorflow as tf
 from keras import backend as K
+from keras.layers import Activation
+from keras.layers import Conv2D
+from keras.layers import Dense
+from keras.layers import Dropout
+from keras.layers import Flatten
+from keras.layers import MaxPooling2D
+from keras.models import Sequential
+from keras.preprocessing.image import array_to_img
+from keras.preprocessing.image import ImageDataGenerator
+from keras.preprocessing.image import img_to_array
+from keras.preprocessing.image import load_img
 from keras.utils import plot_model
+from PIL import Image
 
 
 def show_data(paths: tuple):
@@ -50,11 +55,11 @@ def generate_better_data(paths: tuple):
         rotation_range=40,
         width_shift_range=0.2,
         height_shift_range=0.2,
-        rescale=1. / 255,
+        rescale=1.0 / 255,
         shear_range=0.2,
         zoom_range=0.2,
         horizontal_flip=True,
-        fill_mode="nearest"
+        fill_mode="nearest",
     )
 
     for i in paths[0]:
@@ -63,7 +68,12 @@ def generate_better_data(paths: tuple):
         x = x.reshape((1,) + x.shape)
 
         i = 0
-        for batch in datagen.flow(x, batch_size=1, save_to_dir=pathlib.Path(DATA, Better, "yes"), save_format="jpg"):
+        for batch in datagen.flow(
+            x,
+            batch_size=1,
+            save_to_dir=pathlib.Path("DATA", "Better", "yes"),
+            save_format="jpg",
+        ):
             i += 1
             if i > 20:
                 break
@@ -73,7 +83,12 @@ def generate_better_data(paths: tuple):
         x = x.reshape((1,) + x.shape)
 
         i = 0
-        for batch in datagen.flow(x, batch_size=1, save_to_dir=pathlib.Path(DATA, Better, "no"), save_format="jpg"):
+        for batch in datagen.flow(
+            x,
+            batch_size=1,
+            save_to_dir=pathlib.Path("DATA", "Better", "no"),
+            save_format="jpg",
+        ):
             i += 1
             if i > 20:
                 break
