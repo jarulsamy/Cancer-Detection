@@ -8,17 +8,16 @@ import keras
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
-from keras import backend as K
-from keras.layers import Activation
-from keras.layers import Conv2D
-from keras.layers import Dense
-from keras.layers import Dropout
-from keras.layers import Flatten
-from keras.layers import MaxPooling2D
-from keras.models import Sequential
 from keras.preprocessing.image import ImageDataGenerator
-
-from . import loader
+from tensorflow.keras import backend as K
+from tensorflow.keras.layers import Activation
+from tensorflow.keras.layers import Conv2D
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import Flatten
+from tensorflow.keras.layers import MaxPooling2D
+from tensorflow.keras.models import Sequential
+from utils import loader
 
 # Size to resize images to
 img_width, img_height = 150, 150
@@ -85,16 +84,18 @@ class Metrics(keras.callbacks.Callback):
             tf.summary.scalar("Loss", logs.get("loss"), step=epoch)
 
 
-def train(train, test):
+def train(train, test, save=False):
     """
-    Train a model and save to disk
+    Train a model and optionally save to disk
     """
     model = prep_model()
 
     # Tensorboard Logs
 
     metrics = Metrics()
-    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir, histogram_freq=1)
+    tensorboard_callback = keras.callbacks.TensorBoard(
+        log_dir=metrics.logdir, histogram_freq=1
+    )
 
     # Augmentation for training set, many changes
     train_datagen = ImageDataGenerator(
@@ -126,11 +127,12 @@ def train(train, test):
         callbacks=[tensorboard_callback, metrics],
     )
 
-    # Serialize to json and save
-    model_json = model.to_json()
-    with open("model.json", "w") as f:
-        f.write(model_json)
-    model.save_weights("model.h5")
+    if save:
+        # Serialize to json and save
+        model_json = model.to_json()
+        with open("model.json", "w") as f:
+            f.write(model_json)
+        model.save_weights("model.h5")
 
     return model
 
@@ -145,10 +147,10 @@ def post_train_examples(files, model):
     no = [cv2.imread(random.choice(files[1])) for _ in range(2)]
 
     # Resize
-    yes = [cv2.resize(i, (img_height, img_width)) for i in yes]
-    no = [cv2.resize(i, (img_height, img_width)) for i in no]
+    yes = [cv2.resize(img, (img_height, img_width)) for img in yes]
+    no = [cv2.resize(img, (img_height, img_width)) for img in no]
 
-    images = {"Yes": yes, "No": no}
+    images = {"Cancerous": yes, "Healthy": no}
 
     index = 1
     plt.figure(figsize=[6, 6])
@@ -156,7 +158,7 @@ def post_train_examples(files, model):
         for j in images[i]:
             plt.subplot(2, 2, index)
             pred = model.predict(j[np.newaxis, ...])
-            pred = "Yes" if pred == 1 else "No"
+            pred = "Cancerous" if pred == 1 else "Healthy"
             plt.title(f"Pred: {pred}, Actual: {i}")
             plt.imshow(j, cmap="gray")
             index += 1

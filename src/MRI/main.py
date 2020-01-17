@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 import argparse
 
-from ANN import *
-from keras.models import model_from_json
+from ANN import post_train_examples
+from ANN import train
+from tensorflow.keras.models import model_from_json
+from utils import load_data
+
+# from ANN import *
+# from cancer import load_data, train, post_train_examples
 
 ap = argparse.ArgumentParser()
 ap.add_argument(
