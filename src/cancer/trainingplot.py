@@ -7,7 +7,9 @@ import numpy as np
 class TrainingPlot(keras.callbacks.Callback):
 
     # Called when the training begins
-    def on_train_begin(self, logs={}):
+    def on_train_begin(self, logs=None):
+        if logs is None:
+            logs = {}
         # Initialize the lists for holding the logs, losses and accuracies
         self.losses = []
         self.acc = []
@@ -16,8 +18,9 @@ class TrainingPlot(keras.callbacks.Callback):
         self.logs = []
 
     # Called at the end of each epoch
-    def on_epoch_end(self, epoch, logs={}):
-
+    def on_epoch_end(self, epoch, logs=None):
+        if logs is None:
+            logs = {}
         # Append the logs, losses and accuracies to the lists
         self.logs.append(logs)
         self.losses.append(logs.get("loss"))

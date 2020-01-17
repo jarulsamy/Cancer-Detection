@@ -1,15 +1,11 @@
-import json
-import os
 import pathlib
 import random
-import time
 from datetime import datetime
 
 import cv2
 import keras
 import matplotlib.pyplot as plt
 import numpy as np
-import scipy
 import tensorflow as tf
 from keras import backend as K
 from keras.layers import Activation
@@ -19,13 +15,7 @@ from keras.layers import Dropout
 from keras.layers import Flatten
 from keras.layers import MaxPooling2D
 from keras.models import Sequential
-from keras.preprocessing.image import array_to_img
 from keras.preprocessing.image import ImageDataGenerator
-from keras.preprocessing.image import img_to_array
-from keras.preprocessing.image import load_img
-from keras.regularizers import l2
-from keras.utils import plot_model
-from PIL import Image
 
 from . import loader
 
@@ -74,7 +64,7 @@ def prep_model():
 
 # Callback class to log metrics to tensorboard
 class Metrics(keras.callbacks.Callback):
-    def __init__(self, logdir):
+    def __init__(self):
         logdir = "logs/" + datetime.now().strftime("%Y%m%d-%H%M%S")
         self.logdir = str(pathlib.Path(logdir))
 

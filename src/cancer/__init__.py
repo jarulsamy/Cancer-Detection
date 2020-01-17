@@ -1,2 +1,6 @@
 __version__ = "0.1.0"
-__all__ = ["ANN", "SVM", "loader", "debug"]
+
+from .ANN import *
+from .SVM import *
+from .loader import *
+from .debug import *

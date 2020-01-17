@@ -1,12 +1,9 @@
-import json
-import os
 import pathlib
 import time
 from datetime import datetime
 
 import cv2
 import keras
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 import tensorflow as tf
@@ -16,14 +13,12 @@ from keras.layers import Conv2D
 from keras.layers import Dense
 from keras.layers import Dropout
 from keras.layers import Flatten
-from keras.layers import MaxPooling2D
 from keras.models import Sequential
 from keras.preprocessing.image import array_to_img
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import load_img
 from keras.utils import plot_model
-from PIL import Image
 
 
 def show_data(paths: tuple):
@@ -68,7 +63,7 @@ def generate_better_data(paths: tuple):
         x = x.reshape((1,) + x.shape)
 
         i = 0
-        for batch in datagen.flow(
+        for _ in datagen.flow(
             x,
             batch_size=1,
             save_to_dir=pathlib.Path("DATA", "Better", "yes"),
@@ -77,13 +72,14 @@ def generate_better_data(paths: tuple):
             i += 1
             if i > 20:
                 break
+
     for i in paths[1]:
         img = load_img(i)
         x = img_to_array(img)
         x = x.reshape((1,) + x.shape)
 
         i = 0
-        for batch in datagen.flow(
+        for _ in datagen.flow(
             x,
             batch_size=1,
             save_to_dir=pathlib.Path("DATA", "Better", "no"),

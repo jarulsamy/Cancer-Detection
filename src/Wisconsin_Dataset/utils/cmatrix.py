@@ -1,10 +1,7 @@
-import math
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 
 
@@ -35,20 +32,7 @@ def cmatrix(predict, y):
     columns = ["predicted_cancer", "predicted_healthy"]
     rows = ["is_cancer", "is_healthy"]
 
-    # print(f"False Negative: {false_negative}")
-    # print(f"True Negative: {true_negative}")
-    # print(f"False Positive: {false_positive}")
-    # print(f"True Negative: {true_negative}")
-
-    print()
-    print(f"Number of samples {len(y)}")
-    output = pd.DataFrame(
-        [[true_negative, false_positive], [false_negative, true_positive]],
-        rows,
-        columns,
-    )
-    print(output)
-    print()
+    return output
 
 
 def pretty_cmatrix(predict, y, method, dtype):
@@ -84,6 +68,6 @@ def pretty_cmatrix(predict, y, method, dtype):
     plt.title(
         f"{method} {dtype} Set: {num_samples} Samples\n{num_correct}/{num_samples} {percentage_correct}% Accuracy"
     )
-    matrix = sns.heatmap(confusion_df, annot=True, fmt="g")
+    sns.heatmap(confusion_df, annot=True, fmt="g")
 
     return confusion_df

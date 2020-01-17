@@ -1,6 +1,4 @@
 import argparse
-import logging
-import os
 
 from ANN import *
 from keras.models import model_from_json

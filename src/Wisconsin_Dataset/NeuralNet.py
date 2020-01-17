@@ -1,35 +1,13 @@
 import math
 import pathlib
-import sys
 from datetime import datetime
 
 import keras
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
 import scipy
-import seaborn as sns
-import tensorflow as tf
-from keras import backend as K
 from keras.layers import Activation
-from keras.layers import Conv1D
 from keras.layers import Dense
 from keras.layers import Dropout
-from keras.layers import Flatten
-from keras.layers import MaxPooling2D
 from keras.models import Sequential
-from keras.preprocessing.image import array_to_img
-from keras.preprocessing.image import ImageDataGenerator
-from keras.preprocessing.image import img_to_array
-from keras.preprocessing.image import load_img
-from keras.regularizers import l2
-from keras.utils import plot_model
-from sklearn.datasets import load_breast_cancer
-from sklearn.metrics import classification_report
-from sklearn.metrics import confusion_matrix
-from sklearn.model_selection import train_test_split
-
-# ML
 
 
 def prep_model(num_features):
@@ -44,7 +22,7 @@ def prep_model(num_features):
         model.add(Dense(512))
         model.add(Activation("relu"))
 
-    # model.add(Dropout(1))
+    model.add(Dropout(1))
     model.add(Dense(1))
     model.add(Activation("sigmoid"))
 
