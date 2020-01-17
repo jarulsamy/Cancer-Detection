@@ -2,11 +2,8 @@ import pathlib
 import time
 
 import cv2
-import scipy
 import tensorflow as tf
-from keras import backend as K
 from keras.layers import Activation
-from keras.preprocessing.image import array_to_img
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import load_img

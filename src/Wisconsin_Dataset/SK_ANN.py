@@ -2,7 +2,6 @@ from datetime import datetime
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-import numpy as np
 from NeuralNet import prep_model
 from NeuralNet import step
 from NeuralNet import train

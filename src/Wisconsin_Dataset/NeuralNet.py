@@ -3,13 +3,11 @@ import os
 import pathlib
 from datetime import datetime
 
-import keras
 import scipy
 import tensorflow as tf
 from tensorflow.keras import callbacks
 from tensorflow.keras.layers import Activation
 from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import Dropout
 from tensorflow.keras.models import Sequential
 
 # Suppress tensorflow verbose output
