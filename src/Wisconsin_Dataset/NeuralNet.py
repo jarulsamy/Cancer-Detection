@@ -1,13 +1,20 @@
 import math
+import os
 import pathlib
 from datetime import datetime
 
 import keras
 import scipy
-from keras.layers import Activation
-from keras.layers import Dense
-from keras.layers import Dropout
-from keras.models import Sequential
+import tensorflow as tf
+from tensorflow.keras import callbacks
+from tensorflow.keras.layers import Activation
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dropout
+from tensorflow.keras.models import Sequential
+
+# Suppress tensorflow verbose output
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+tf.get_logger().setLevel("ERROR")
 
 
 def prep_model(num_features):
@@ -15,19 +22,21 @@ def prep_model(num_features):
     Define network architechture
     """
     model = Sequential()
-    model.add(Dense(num_features))
-    model.add(Activation("relu"))
+    model.add(Dense(512, input_dim=num_features))
+    model.add(Activation("sigmoid"))
 
     for _ in range(3):
         model.add(Dense(512))
         model.add(Activation("relu"))
 
-    model.add(Dropout(1))
+    # model.add(Dropout(0.5))
     model.add(Dense(1))
     model.add(Activation("sigmoid"))
 
     model.compile(
-        loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"]  # or rmsprop
+        loss=tf.keras.losses.BinaryCrossentropy(),
+        optimizer=tf.keras.optimizers.Adam(),
+        metrics=["accuracy"],
     )
 
     return model
@@ -43,7 +52,7 @@ def train(X, y, epochs=10, batch_size=5, save=False):
     # Tensorboard Logs
     logdir = "logs/" + datetime.now().strftime("%Y%m%d-%H%M%S")
     logdir = str(pathlib.Path(logdir))
-    tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir, histogram_freq=1)
+    tensorboard_callback = callbacks.TensorBoard(log_dir=logdir, histogram_freq=1)
 
     model.fit(
         X,
@@ -51,6 +60,7 @@ def train(X, y, epochs=10, batch_size=5, save=False):
         epochs=epochs,
         steps_per_epoch=len(X) // batch_size,
         callbacks=[tensorboard_callback],
+        validation_split=0.2,
     )
 
     if save:
@@ -67,8 +77,8 @@ def sigmoid(x):
     return 1 / (1 + math.exp(-x))
 
 
-def binary_step(x):
-    if x > 0:
+def step(x, s=0.5):
+    if x >= s:
         return 1
     else:
         return 0

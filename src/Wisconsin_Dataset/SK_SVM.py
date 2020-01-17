@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
-import numpy as np
 from sklearn.metrics import confusion_matrix
-from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
 from utils import load_cancer
 from utils import pretty_cmatrix
@@ -17,4 +15,5 @@ y_predict = svc_model.predict(X_test)
 pretty_cmatrix(y_predict, y_test, "SVM", "Test")
 y_predict = svc_model.predict(X_train)
 pretty_cmatrix(y_predict, y_train, "SVM", "Train")
+
 plt.show()

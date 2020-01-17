@@ -41,11 +41,4 @@ def load_cancer():
     y_train = y_train.values
     y_test = y_test.values
 
-    # ret = {
-    #     "X_train": X_train,
-    #     "X_test": X_test,
-    #     "y_train": y_train,
-    #     "y_test": y_test
-    # }
-
     return X_train_scaled, X_test_scaled, y_train, y_test

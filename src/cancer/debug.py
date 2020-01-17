@@ -1,24 +1,15 @@
 import pathlib
 import time
-from datetime import datetime
 
 import cv2
-import keras
-import numpy as np
 import scipy
 import tensorflow as tf
 from keras import backend as K
 from keras.layers import Activation
-from keras.layers import Conv2D
-from keras.layers import Dense
-from keras.layers import Dropout
-from keras.layers import Flatten
-from keras.models import Sequential
 from keras.preprocessing.image import array_to_img
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import load_img
-from keras.utils import plot_model
 
 
 def show_data(paths: tuple):
