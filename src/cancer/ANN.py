@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pathlib
 import random
 from datetime import datetime
