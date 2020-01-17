@@ -2,14 +2,12 @@ import pathlib
 import time
 
 import cv2
-import tensorflow as tf
-from keras.layers import Activation
 from keras.preprocessing.image import ImageDataGenerator
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import load_img
 
 
-def show_data(paths: tuple):
+def show_data(paths):
     """
     Show all the images
     param1: tuple(list, list) # (List_of_yes_images, List_of_no_images)
@@ -30,7 +28,7 @@ def show_data(paths: tuple):
             exit(0)
 
 
-def generate_better_data(paths: tuple):
+def generate_better_data(paths):
     """
     Debug tool to generate tons of augmented images.
     """

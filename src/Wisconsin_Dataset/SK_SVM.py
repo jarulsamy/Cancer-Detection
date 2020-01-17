@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix
 from sklearn.svm import SVC
 from utils import load_cancer
 from utils import pretty_cmatrix

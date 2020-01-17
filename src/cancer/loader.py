@@ -17,9 +17,9 @@ def load_data(path):
     yes_files = list()
     no_files = list()
 
-    for (_, _, filenames) in os.walk(yes_path):
+    for (dirpath, _, filenames) in os.walk(yes_path):
         yes_files += [os.path.join(dirpath, file) for file in filenames]
-    for (_, _, filenames) in os.walk(no_path):
+    for (dirpath, _, filenames) in os.walk(no_path):
         no_files += [os.path.join(dirpath, file) for file in filenames]
 
     return (yes_files, no_files)

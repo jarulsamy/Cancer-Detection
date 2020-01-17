@@ -2,7 +2,6 @@ from datetime import datetime
 from pathlib import Path
 
 import matplotlib.pyplot as plt
-from NeuralNet import prep_model
 from NeuralNet import step
 from NeuralNet import train
 from utils import load_cancer

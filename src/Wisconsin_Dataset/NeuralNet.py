@@ -3,7 +3,6 @@ import os
 import pathlib
 from datetime import datetime
 
-import scipy
 import tensorflow as tf
 from tensorflow.keras import callbacks
 from tensorflow.keras.layers import Activation
