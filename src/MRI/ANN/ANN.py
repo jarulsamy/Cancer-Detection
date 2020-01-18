@@ -4,7 +4,6 @@ import random
 from datetime import datetime
 
 import cv2
-import keras
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
@@ -17,6 +16,10 @@ from tensorflow.keras.layers import Dropout
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import MaxPooling2D
 from tensorflow.keras.models import Sequential
+from tensorflow.keras.callbacks import TensorBoard
+from sklearn.metrics import confusion_matrix
+import pandas as pd
+import seaborn as sns
 from utils import loader
 
 # Size to resize images to
@@ -56,32 +59,9 @@ def prep_model():
     model.add(Activation("sigmoid"))
 
     model.compile(
-        loss="binary_crossentropy", optimizer="rmsprop", metrics=["accuracy"]  # or adam
+        loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"]
     )
-
     return model
-
-
-# Callback class to log metrics to tensorboard
-class Metrics(keras.callbacks.Callback):
-    def __init__(self):
-        logdir = "logs/" + datetime.now().strftime("%Y%m%d-%H%M%S")
-        self.logdir = str(pathlib.Path(logdir))
-
-    def on_train_begin(self, logs=None):
-        self.summary_writer = tf.summary.create_file_writer(self.logdir)
-        self.accuracy = []
-        self.losses = []
-
-    def on_batch_end(self, batch, logs):
-        self.accuracy.append(logs.get("accuracy"))
-        self.losses.append(logs.get("loss"))
-
-    # Sometimes duplicates, seems like a tensorboard bug.
-    def on_epoch_end(self, epoch, logs):
-        with self.summary_writer.as_default():
-            tf.summary.scalar("Accuracy", logs.get("accuracy"), step=epoch)
-            tf.summary.scalar("Loss", logs.get("loss"), step=epoch)
 
 
 def train(train, test, save=False):
@@ -89,12 +69,12 @@ def train(train, test, save=False):
     Train a model and optionally save to disk
     """
     model = prep_model()
+    logdir = "logs/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+    logdir = str(pathlib.Path(logdir))
 
     # Tensorboard Logs
-
-    metrics = Metrics()
-    tensorboard_callback = keras.callbacks.TensorBoard(
-        log_dir=metrics.logdir, histogram_freq=1
+    tensorboard_callback = TensorBoard(
+        log_dir=logdir, histogram_freq=1
     )
 
     # Augmentation for training set, many changes
@@ -124,7 +104,7 @@ def train(train, test, save=False):
         steps_per_epoch=2000 // batch_size,
         epochs=EPOCHS,
         validation_data=validation_generator,
-        callbacks=[tensorboard_callback, metrics],
+        callbacks=[tensorboard_callback],
     )
 
     if save:
@@ -137,7 +117,14 @@ def train(train, test, save=False):
     return model
 
 
-def post_train_examples(files, model):
+def step(x, s=0.5):
+    if x >= s:
+        return 1
+    else:
+        return 0
+
+
+def post_train_examples(files, model, thresh=0.8, dset=None):
     """
     Show some example images with classifications.
     """
@@ -154,13 +141,46 @@ def post_train_examples(files, model):
 
     index = 1
     plt.figure(figsize=[6, 6])
-    for i in images:
-        for j in images[i]:
+    plt.title(f"ANN {dset} Set")
+    for (k, v) in images.items():
+        for i in v:
             plt.subplot(2, 2, index)
-            pred = model.predict(j[np.newaxis, ...])
+            data = tf.cast(i, tf.float32)
+            pred = model.predict(data[np.newaxis, ...])
             pred = "Cancerous" if pred == 1 else "Healthy"
-            plt.title(f"Pred: {pred}, Actual: {i}")
-            plt.imshow(j, cmap="gray")
+            plt.title(f"Pred: {pred}, Actual {k}")
+            plt.imshow(i, cmap="gray")
             index += 1
+
+    yes = files[0]
+    no = files[1]
+
+    yes = [cv2.resize(cv2.imread(img), (img_height, img_width)) for img in yes]
+    no = [cv2.resize(cv2.imread(img), (img_height, img_width)) for img in no]
+
+    X = yes + no
+    X = [tf.cast(i, tf.float32)[np.newaxis, ...] for i in X]
+    predict = np.asarray([model.predict(i) for i in X])
+    predict = predict.flatten()
+    predict = [step(i, thresh) for i in predict]
+    y = np.asarray([1 for _ in yes] + [0 for _ in no])
+
+    num_correct = np.sum(y == predict)
+    num_samples = len(y)
+    percentage_correct = round(num_correct / num_samples * 100, 2)
+
+    cm = np.array(confusion_matrix(y, predict, labels=[0, 1]))
+    confusion_df = pd.DataFrame(
+        cm,
+        index=["is_cancer", "is_healthy"],
+        columns=["predicted_cancer", "predicted_healthy"]
+    )
+
+    plt.figure(figsize=[8, 4])
+    plt.xticks(rotation="horizontal")
+    plt.title(
+        f"ANN {dset} Set: {num_samples} Samples\n{num_correct}/{num_samples} {percentage_correct}% Accuracy"
+    )
+    sns.heatmap(confusion_df, annot=True, fmt="g")
 
     plt.show()

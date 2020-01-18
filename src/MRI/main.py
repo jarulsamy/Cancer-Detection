@@ -4,10 +4,6 @@ import argparse
 from ANN import post_train_examples
 from ANN import train
 from tensorflow.keras.models import model_from_json
-from utils import load_data
-
-# from ANN import *
-# from cancer import load_data, train, post_train_examples
 
 ap = argparse.ArgumentParser()
 ap.add_argument(
@@ -57,7 +53,8 @@ args = vars(ap.parse_args())
 
 if args["force_train"]:
     model = train(args["train_data"], args["val_data"])
-    post_train_examples(args["train_data"], model)
+    if not args["skip_examples"]:
+        post_train_examples(args["train_data"], model, "Train")
 else:
     # Try to open json file
     # Retrain if fail
@@ -68,7 +65,7 @@ else:
         print("Retraining...")
         model = train(args["train_data"], args["val_data"])
         if not args["skip_examples"]:
-            post_train_examples(args["train_data"], model)
+            post_train_examples(args["train_data"], model, "Train")
         exit(0)
 
     loaded_model_json = json_file.read()
@@ -84,10 +81,10 @@ else:
         print("Retraining...")
         model = train(args["train_data"], args["val_data"])
         if not args["skip_examples"]:
-            post_train_examples(args["val_data"], model)
+            post_train_examples(args["train_data"], model, "Train")
         exit(0)
 
     print("Succesfully loaded pretrained model!")
 
     if not args["skip_examples"]:
-        post_train_examples(args["val_data"], loaded_model)
+        post_train_examples(args["train_data"], model, "Train")
