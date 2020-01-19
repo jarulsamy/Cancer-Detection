@@ -34,6 +34,6 @@ y_predict = model.predict(X_train)
 stepped_predict = []
 for i in y_predict:
     stepped_predict.append(step(i, THRESHOLD))
-pretty_cmatrix(stepped_predict, y_train, "ANN", "TRAIN")
+pretty_cmatrix(stepped_predict, y_train, "ANN", "Train")
 
 plt.show()

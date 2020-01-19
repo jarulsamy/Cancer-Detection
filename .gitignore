@@ -3,8 +3,9 @@
 
 # Tensorflow related stuffs
 **/logs
-**/model.h5
-**/model.json
+logs/
+**/model*.h5
+**/model*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -4,6 +4,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
+"""
+This is largely just an example for
+creating keras callbacks. Not really
+intended to be used in production.
+"""
+
+
 class TrainingPlot(keras.callbacks.Callback):
 
     # Called when the training begins
