@@ -6,9 +6,13 @@ from datetime import datetime
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import seaborn as sns
 import tensorflow as tf
 from keras.preprocessing.image import ImageDataGenerator
+from sklearn.metrics import confusion_matrix
 from tensorflow.keras import backend as K
+from tensorflow.keras.callbacks import TensorBoard
 from tensorflow.keras.layers import Activation
 from tensorflow.keras.layers import Conv2D
 from tensorflow.keras.layers import Dense
@@ -16,10 +20,6 @@ from tensorflow.keras.layers import Dropout
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.layers import MaxPooling2D
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.callbacks import TensorBoard
-from sklearn.metrics import confusion_matrix
-import pandas as pd
-import seaborn as sns
 from utils import loader
 
 # Size to resize images to
@@ -58,9 +58,7 @@ def prep_model():
     model.add(Dense(1))
     model.add(Activation("sigmoid"))
 
-    model.compile(
-        loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"]
-    )
+    model.compile(loss="binary_crossentropy", optimizer="adam", metrics=["accuracy"])
     return model
 
 
@@ -73,9 +71,7 @@ def train(train, test, save=False):
     logdir = str(pathlib.Path(logdir))
 
     # Tensorboard Logs
-    tensorboard_callback = TensorBoard(
-        log_dir=logdir, histogram_freq=1
-    )
+    tensorboard_callback = TensorBoard(log_dir=logdir, histogram_freq=1)
 
     # Augmentation for training set, many changes
     train_datagen = ImageDataGenerator(
@@ -173,7 +169,7 @@ def post_train_examples(files, model, thresh=0.8, dset=None):
     confusion_df = pd.DataFrame(
         cm,
         index=["is_cancer", "is_healthy"],
-        columns=["predicted_cancer", "predicted_healthy"]
+        columns=["predicted_cancer", "predicted_healthy"],
     )
 
     plt.figure(figsize=[8, 4])
