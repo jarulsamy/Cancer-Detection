@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from sklearn.datasets import load_breast_cancer
 
 
@@ -43,3 +45,17 @@ def load_cancer():
     y_test = y_test.values
 
     return X_train_scaled, X_test_scaled, y_train, y_test
+
+
+def correlation_map():
+    cancer = load_breast_cancer()
+    df_cancer = pd.DataFrame(
+        np.c_[cancer["data"], cancer["target"]],
+        columns=np.append(cancer["feature_names"], ["target"]),
+    )
+    plt.figure(figsize=(16, 16))
+    ax = sns.heatmap(df_cancer.corr())
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+    ax.set_title("Correlation Heatmap")
+    plt.savefig("heatmap2.png", transparent=True)
+    plt.show()
