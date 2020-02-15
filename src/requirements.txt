@@ -16,7 +16,7 @@ Pillow
 protobuf
 psutil
 pycodestyle
-pylab
+pre-commit
 pyparsing
 pyreadline
 python-dateutil
