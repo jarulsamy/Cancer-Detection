@@ -47,6 +47,14 @@ def load_cancer():
     return X_train_scaled, X_test_scaled, y_train, y_test
 
 
+def cancer_attributes():
+    """
+    Returns list of all cancer features.
+    """
+    cancer = load_breast_cancer()
+    return list(cancer["feature_names"])
+
+
 def correlation_map():
     cancer = load_breast_cancer()
     df_cancer = pd.DataFrame(

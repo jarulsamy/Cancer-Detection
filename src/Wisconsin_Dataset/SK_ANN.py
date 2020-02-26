@@ -5,8 +5,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from NeuralNet import step
 from NeuralNet import train
+from utils import cancer_attributes
 from utils import load_cancer
 from utils import pretty_cmatrix
+from utils import sample_table
 
 
 # Only samples with 70% confidence are considered cancerous
@@ -35,5 +37,14 @@ stepped_predict = []
 for i in y_predict:
     stepped_predict.append(step(i, THRESHOLD))
 pretty_cmatrix(stepped_predict, y_train, "ANN", "Train")
+
+attributes = cancer_attributes()
+sample_table(
+    X_train,
+    y_train,
+    y_predict.flatten(),
+    columns=attributes,
+    write_csv="ANN_TRAIN_DATA.csv",
+)
 
 plt.show()
