@@ -15,6 +15,7 @@ from utils import sample_table
 THRESHOLD = 0.7
 
 X_train, X_test, y_train, y_test = load_cancer()
+attributes = cancer_attributes()
 
 # Timestamp for tensorboard logs
 logdir = "logs/" + datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -30,6 +31,13 @@ stepped_predict = []
 for i in y_predict:
     stepped_predict.append(step(i, THRESHOLD))
 pretty_cmatrix(stepped_predict, y_test, "ANN", "Test")
+sample_table(
+    X_test,
+    y_test,
+    y_predict.flatten(),
+    columns=attributes,
+    write_csv="ANN_TEST_DATA.csv",
+)
 
 
 y_predict = model.predict(X_train)
@@ -38,7 +46,6 @@ for i in y_predict:
     stepped_predict.append(step(i, THRESHOLD))
 pretty_cmatrix(stepped_predict, y_train, "ANN", "Train")
 
-attributes = cancer_attributes()
 sample_table(
     X_train,
     y_train,
