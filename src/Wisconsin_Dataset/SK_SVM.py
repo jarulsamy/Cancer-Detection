@@ -15,24 +15,24 @@ svc_model.fit(X_train, y_train)
 
 # Confusion Matrix for both Test and training sets
 y_predict = svc_model.predict(X_test)
-pretty_cmatrix(y_predict, y_test, "SVM", "Test")
+pretty_cmatrix(y_predict, y_test, "SVM", "Test")  # , filename="SVM_TEST.png")
 sample_table(
     X_test,
     y_test,
     y_predict.flatten(),
     columns=attributes,
-    write_csv="SVM_TEST_DATA.csv",
+    # write_csv="SVM_TEST_DATA.csv",
 )
 
 y_predict = svc_model.predict(X_train)
-pretty_cmatrix(y_predict, y_train, "SVM", "Train")
+pretty_cmatrix(y_predict, y_train, "SVM", "Train")  # , filename="SVN_TRAIN.png")
 
 sample_table(
     X_train,
     y_train,
     y_predict.flatten(),
     columns=attributes,
-    write_csv="SVM_TRAIN_DATA.csv",
+    # write_csv="SVM_TRAIN_DATA.csv",
 )
 
 plt.show()

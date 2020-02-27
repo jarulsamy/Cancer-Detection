@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from matplotlib import rc
 from sklearn.datasets import load_breast_cancer
 
 
@@ -55,15 +56,38 @@ def cancer_attributes():
     return list(cancer["feature_names"])
 
 
-def correlation_map():
+def correlation_map(save=True):
+    # Special font settings
+    font = {"family": "Calibri", "weight": "normal", "size": 24}
+    rc("font", **font)
+
     cancer = load_breast_cancer()
     df_cancer = pd.DataFrame(
         np.c_[cancer["data"], cancer["target"]],
         columns=np.append(cancer["feature_names"], ["target"]),
     )
-    plt.figure(figsize=(16, 16))
-    ax = sns.heatmap(df_cancer.corr())
-    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
-    ax.set_title("Correlation Heatmap")
-    plt.savefig("heatmap2.png", transparent=True)
+
+    # plt.figure(figsize=(8, 4))
+    plot = sns.pairplot(
+        df_cancer,
+        hue="target",
+        vars=[
+            "mean radius",
+            "mean texture",
+            "mean perimeter",
+            "mean area",
+            "mean smoothness",
+        ],
+    )
+    plot.fig.suptitle("Correlation of Tumor Attributes and Malignancy", y=1.08)
+    plot.set(xticklabels=[], yticklabels=[])
+    plot._legend.remove()
+
+    if save:
+        plt.savefig("correlation.png", dpi=800, transparent=True)
+
     plt.show()
+
+
+if __name__ == "__main__":
+    correlation_map(save=True)
