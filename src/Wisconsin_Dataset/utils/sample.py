@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
 import csv
 
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import seaborn as sns
 from prettytable import PrettyTable
-from sklearn.datasets import load_breast_cancer
 
 
 def _clean_nums(*nums: float, digits=2):
