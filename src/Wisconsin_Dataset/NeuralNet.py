@@ -42,7 +42,7 @@ def prep_model(num_features):
 
 def train(X, y, epochs=10, batch_size=5, save=False):
     """
-    Train a model and save to disk
+    Train a model and, optionally, save to disk
     """
     num_features = X[0].shape[0]
     model = prep_model(num_features)

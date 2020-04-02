@@ -40,9 +40,9 @@ def pretty_cmatrix(predict, y, method, dtype, filename=False):
         columns=["Predicted Cancer", "Predicted Healthy"],
     )
 
-    plt.figure(figsize=(16, 8))
-    plt.xticks(rotation="horizontal", fontsize=36)
-    plt.yticks(fontsize=36, ha="right", va="center")
+    plt.figure(figsize=(8, 4))
+    plt.xticks(rotation="horizontal")
+    plt.yticks(ha="right", va="center")
     plt.title(
         f"{method} {dtype} Set: {num_samples} Samples\n{num_correct}/{num_samples} {percentage_correct}% Accuracy"
     )
