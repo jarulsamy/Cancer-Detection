@@ -47,10 +47,10 @@ Step 7: Evaluate and visualize
 
 ## Results
 
-<img src="assets/ANN_TEST.png" width="300">
-<img src="assets/ANN_TRAIN.png" with="300">
-<img src="assets/SVM_TEST.png" width="300">
-<img src="assets/SVM_TRAIN.png" width="300">
+<img src="assets/ANN_TEST.png">
+<img src="assets/ANN_TRAIN.png">
+<img src="assets/SVM_TEST.png">
+<img src="assets/SVM_TRAIN.png">
 
 ## Running
 
