@@ -1,5 +1,8 @@
 # Cancer-Detection
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8612da40ddca464ea8a4a816a2f724a5)](https://app.codacy.com/manual/jarulsamy/Cancer-Detection?utm_source=github.com&utm_medium=referral&utm_content=jarulsamy/Cancer-Detection&utm_campaign=Badge_Grade_Settings)
+
+
 Machine learning aids in many of our day-to-day ordeals in normal life. Some of the most powerful uses of machine learning are in the medical field. In this repository, the viability of artificial neural networks and support vector machines in tumor malignancy classification is tested.
 
 ## Dependencies
